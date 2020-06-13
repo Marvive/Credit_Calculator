@@ -1,22 +1,25 @@
 import math
 
 
-# A
+# A principal, interest, number of payments
 def calc_ordinary_annuity(p, i, n):
-    nominal = calc_nom_int_rate(i)
-    return math.ceil(p * (nominal * (1 + nominal) ** n) / ((1 + nominal) ** n - 1))
+    nominal_interest = calc_nom_int_rate(i)
+    return math.ceil(p * (nominal_interest * (1 + nominal_interest) ** n) / (((1 + nominal_interest) ** n) - 1))
 
 
-# P
-def calc_credit_principal(a, i, n):
-    nominal = calc_nom_int_rate(i)
-    return a / ((nominal * (1 + nominal) ** n) / (1 + nominal) ** n - 1)
+# P annuity payments, number of payments, interest rates
+def calc_credit_principal(a, n, i):
+    nominal_interest = calc_nom_int_rate(i)
+    numerator = a
+    sub_numerator = nominal_interest * ((1 + nominal_interest) ** n)
+    sub_denominator = ((1 + nominal_interest) ** n) - 1
+    return numerator / (sub_numerator / sub_denominator)
 
 
-# n
+# n interest, annuity, principal
 def calc_num_of_payments(i, a, p):
-    nominal = calc_nom_int_rate(i)
-    return math.ceil(math.log(a / (a - nominal * p), (1 + nominal)))
+    nominal_interest = calc_nom_int_rate(i)
+    return math.ceil(math.log(a / (a - nominal_interest * p), (1 + nominal_interest)))
 
 
 # i
@@ -53,5 +56,5 @@ else:
     annuity_payment = float(input("Enter monthly payment:"))
     periods = float(input("Enter count of periods:"))
     interest_rate = float(input("Enter credit interest:"))
-    principal = calc_credit_principal(annuity_payment, interest_rate, periods)
+    principal = calc_credit_principal(annuity_payment, periods, interest_rate)
     print(f"Your credit principal = {principal}!")
