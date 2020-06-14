@@ -245,6 +245,40 @@ files:
     if __name__ == '__main__':
         CreditCalcTest('creditcalc.creditcalc').run_tests()
   learner_created: false
+- name: creditcalc/creditcalc.py
+  visible: true
+  text: "import math\n\n\n# A principal, interest, number of payments\ndef calc_ordinary_annuity(p,\
+    \ i, n):\n    nominal_interest = calc_nom_int_rate(i)\n    return math.ceil(p\
+    \ * (nominal_interest * (1 + nominal_interest) ** n) / (((1 + nominal_interest)\
+    \ ** n) - 1))\n\n\n# P annuity payments, number of payments, interest rates\n\
+    def calc_credit_principal(a, n, i):\n    nominal_interest = calc_nom_int_rate(i)\n\
+    \    numerator = a\n    subnumerator = nominal_interest * ((1 + nominal_interest)\
+    \ ** n)\n    subdenominator = ((1 + nominal_interest) ** n) - 1\n    return numerator\
+    \ / (subnumerator / subdenominator)\n\n\n# n interest, annuity, principal\ndef\
+    \ calc_num_of_payments(i, a, p):\n    nominal_interest = calc_nom_int_rate(i)\n\
+    \    return math.ceil(math.log(a / (a - nominal_interest * p), (1 + nominal_interest)))\n\
+    \n\n# i\ndef calc_nom_int_rate(i):\n    return (i * .01) / 12\n\n\noptions = input(\"\
+    \"\"What do you want to calculate? \ntype \"n\" - for count of months, \ntype\
+    \ \"a\" - for annuity monthly payment,\ntype \"p\" - for credit principal: \n\"\
+    \"\")\n\nif options == \"n\":\n    credit_principal = float(input(\"Enter credit\
+    \ principal:\"))\n    annuity_payment = float(input(\"Enter monthly payment:\"\
+    ))\n    interest_rate = float(input(\"Enter credit interest:\"))\n    no_payments\
+    \ = calc_num_of_payments(interest_rate, annuity_payment, credit_principal)\n \
+    \   if no_payments > 11:\n        years = no_payments // 12\n        months =\
+    \ no_payments % 12\n        print(f\"You need {years} years and {months} months\
+    \ to repay this credit!\")\n    elif no_payments < 1:\n        print(f\"You need\
+    \ {no_payments} months to repay this credit!\")\n    else:\n        print(f\"\
+    You need {no_payments} month to repay this credit!\")\nelif options == \"a\":\n\
+    \    credit_principal = float(input(\"Enter credit principal:\"))\n    periods\
+    \ = float(input(\"Enter count of periods:\"))\n    interest_rate = float(input(\"\
+    Enter credit interest:\"))\n    monthly = calc_ordinary_annuity(credit_principal,\
+    \ interest_rate, periods)\n    print(f\"Your annuity payment = {monthly}\")\n\
+    else:\n    annuity_payment = float(input(\"Enter monthly payment:\"))\n    periods\
+    \ = float(input(\"Enter count of periods:\"))\n    interest_rate = float(input(\"\
+    Enter credit interest:\"))\n    principal = calc_credit_principal(annuity_payment,\
+    \ periods, interest_rate)\n    print(f\"Your credit principal = {principal}!\"\
+    )\n"
+  learner_created: true
 feedback_link: https://hyperskill.org/projects/90/stages/503/implement
 status: Unchecked
 record: -1

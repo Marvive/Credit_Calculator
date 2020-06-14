@@ -1,4 +1,23 @@
 import math
+import argparse
+import sys
+
+
+ap = argparse.ArgumentParser()
+# ap.add_argument("--type", "--principal", "--periods", "--interest", "--payment")
+ap.add_argument("--type", required=True,
+                help="Enter values...")
+ap.add_argument("--principal", type=float,
+                help="Enter values...")
+ap.add_argument("--periods", type=float,
+                help="Enter values...")
+ap.add_argument("--interest", type=float,
+                help="Enter values...")
+ap.add_argument("--payment", type=float,
+                help="Enter values...")
+arg_num = len(sys.argv)
+args = vars(ap.parse_args())
+# args = parser.parse_args()
 
 
 # A principal, interest, number of payments
@@ -13,7 +32,7 @@ def calc_credit_principal(a, n, i):
     numerator = a
     sub_numerator = nominal_interest * ((1 + nominal_interest) ** n)
     sub_denominator = ((1 + nominal_interest) ** n) - 1
-    return numerator / (sub_numerator / sub_denominator)
+    return math.floor(numerator / (sub_numerator / sub_denominator))
 
 
 # n interest, annuity, principal
@@ -27,34 +46,71 @@ def calc_nom_int_rate(i):
     return (i * .01) / 12
 
 
-options = input("""What do you want to calculate? 
-type "n" - for count of months, 
-type "a" - for annuity monthly payment,
-type "p" - for credit principal: 
-""")
+# Dm
+def calc_diff_payment(inter, m_current_period, n_payments, p_principal_total):
+    nominal_interest = calc_nom_int_rate(inter)
+    first = p_principal_total / n_payments
+    second = nominal_interest * (p_principal_total - (p_principal_total * ((m_current_period - 1) / n_payments)))
+    return first + second
 
-if options == "n":
-    credit_principal = float(input("Enter credit principal:"))
-    annuity_payment = float(input("Enter monthly payment:"))
-    interest_rate = float(input("Enter credit interest:"))
-    no_payments = calc_num_of_payments(interest_rate, annuity_payment, credit_principal)
-    if no_payments > 11:
-        years = no_payments // 12
-        months = no_payments % 12
-        print(f"You need {years} years and {months} months to repay this credit!")
-    elif no_payments < 1:
-        print(f"You need {no_payments} months to repay this credit!")
+
+if arg_num < 4:
+    print("Incorrect parameters")
+    print("Less than 4 args")
+elif args["type"] == "annuity":
+    if args["interest"] and args["payment"] and args["periods"]:
+        principal = calc_credit_principal(args["payment"], args["periods"], args["interest"])
+        print(f"Your credit principal = {principal}")
+    elif args["interest"] and args["payment"] and args["principal"]:
+        payments = calc_num_of_payments(args["interest"], args["payment"], args["principal"])
+        # TODO - Add year conversion
+        print(f"You need {payments} to repay this credit!")
+    elif args["interest"]:
+        payment_amount = calc_ordinary_annuity(args["principal"], args["interest"], args["periods"])
+        print(f"Your annuity payment = {payment_amount}")
     else:
-        print(f"You need {no_payments} month to repay this credit!")
-elif options == "a":
-    credit_principal = float(input("Enter credit principal:"))
-    periods = float(input("Enter count of periods:"))
-    interest_rate = float(input("Enter credit interest:"))
-    monthly = calc_ordinary_annuity(credit_principal, interest_rate, periods)
-    print(f"Your annuity payment = {monthly}")
+        print("Incorrect parameters")
+elif args["type"] == "diff":
+    if args["payment"]:
+        print("Incorrect parameters")
+        print("diff cannot include payments")
+    else:
+        # Calc
+        print("Correct number of params")
 else:
-    annuity_payment = float(input("Enter monthly payment:"))
-    periods = float(input("Enter count of periods:"))
-    interest_rate = float(input("Enter credit interest:"))
-    principal = calc_credit_principal(annuity_payment, periods, interest_rate)
-    print(f"Your credit principal = {principal}!")
+    print("Incorrect parameters")
+    print("Wrong Types")
+
+
+#
+# options = input("""What do you want to calculate?
+# type "n" - for count of months,
+# type "a" - for annuity monthly payment,
+# type "p" - for credit principal:
+# """)
+#
+# if options == "n":
+#     credit_principal = float(input("Enter credit principal:"))
+#     annuity_payment = float(input("Enter monthly payment:"))
+#     interest_rate = float(input("Enter credit interest:"))
+#     no_payments = calc_num_of_payments(interest_rate, annuity_payment, credit_principal)
+#     if no_payments > 11:
+#         years = no_payments // 12
+#         months = no_payments % 12
+#         print(f"You need {years} years and {months} months to repay this credit!")
+#     elif no_payments < 1:
+#         print(f"You need {no_payments} months to repay this credit!")
+#     else:
+#         print(f"You need {no_payments} month to repay this credit!")
+# elif options == "a":
+#     credit_principal = float(input("Enter credit principal:"))
+#     periods = float(input("Enter count of periods:"))
+#     interest_rate = float(input("Enter credit interest:"))
+#     monthly = calc_ordinary_annuity(credit_principal, interest_rate, periods)
+#     print(f"Your annuity payment = {monthly}")
+# else:
+#     annuity_payment = float(input("Enter monthly payment:"))
+#     periods = float(input("Enter count of periods:"))
+#     interest_rate = float(input("Enter credit interest:"))
+#     principal = calc_credit_principal(annuity_payment, periods, interest_rate)
+#     print(f"Your credit principal = {principal}!")
