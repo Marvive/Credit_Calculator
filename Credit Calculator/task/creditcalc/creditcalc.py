@@ -56,15 +56,28 @@ def calc_diff_payment(inter, m_current_period, n_payments, p_principal_total):
 
 if arg_num < 4:
     print("Incorrect parameters")
-    print("Less than 4 args")
+    # print("Less than 4 args")
 elif args["type"] == "annuity":
     if args["interest"] and args["payment"] and args["periods"]:
         principal = calc_credit_principal(args["payment"], args["periods"], args["interest"])
         print(f"Your credit principal = {principal}")
     elif args["interest"] and args["payment"] and args["principal"]:
         payments = calc_num_of_payments(args["interest"], args["payment"], args["principal"])
-        # TODO - Add year conversion
-        print(f"You need {payments} to repay this credit!")
+        if payments > 11:
+            years = payments // 12
+            months = payments % 12
+            if months != 0:
+                print(f"You need {years} years and {months} months to repay this credit!")
+            else:
+                print(print(f"You need {years} years to repay this credit!"))
+        elif payments < 1:
+            print(f"You need {payments} months to repay this credit!")
+        else:
+            print(f"You need {payments} month to repay this credit!")
+        total_paid = args["payment"] * payments
+        overpayment = total_paid - args["principal"]
+
+        print(f"Overpayment = {overpayment}")
     elif args["interest"]:
         payment_amount = calc_ordinary_annuity(args["principal"], args["interest"], args["periods"])
         print(f"Your annuity payment = {payment_amount}")
@@ -82,6 +95,8 @@ elif args["type"] == "diff":
             print(f"Month {month_counter}: paid out {diff}")
             month_counter += 1
             total_paid += diff
+        overpayment = total_paid - args["principal"]
+        print(f"Overpayment = {overpayment}")
 else:
     print("Incorrect parameters")
     print("Wrong Types")
