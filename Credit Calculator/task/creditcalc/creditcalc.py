@@ -51,7 +51,7 @@ def calc_diff_payment(inter, m_current_period, n_payments, p_principal_total):
     nominal_interest = calc_nom_int_rate(inter)
     first = p_principal_total / n_payments
     second = nominal_interest * (p_principal_total - (p_principal_total * ((m_current_period - 1) / n_payments)))
-    return first + second
+    return math.ceil(first + second)
 
 
 if arg_num < 4:
@@ -73,10 +73,15 @@ elif args["type"] == "annuity":
 elif args["type"] == "diff":
     if args["payment"]:
         print("Incorrect parameters")
-        print("diff cannot include payments")
     else:
         # Calc
-        print("Correct number of params")
+        total_paid = 0
+        month_counter = 1
+        while total_paid < args["principal"]:
+            diff = calc_diff_payment(args["interest"], month_counter, args["periods"], args["principal"])
+            print(f"Month {month_counter}: paid out {diff}")
+            month_counter += 1
+            total_paid += diff
 else:
     print("Incorrect parameters")
     print("Wrong Types")
